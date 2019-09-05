@@ -1,0 +1,143 @@
+package org.chilon.test_diffrent_solutions;
+
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+public class Main extends AppCompatActivity {
+
+    private static final String TAG = "Main";
+
+    ListView listView;
+    Button save, getFromDb, update, delete;
+    EditText editCity, editCountry, editID;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_main);
+        Log.d(TAG, "onCreate: Started.");
+        listView = findViewById(R.id.listViewMain);
+        save = findViewById(R.id.button_save_to_db);
+        getFromDb = findViewById(R.id.button_get_from_db);
+        update = findViewById(R.id.button_update_db);
+        delete = findViewById(R.id.button_delete_from_db);
+        final DataBaseHelper db = new DataBaseHelper(this);
+        editCity = findViewById(R.id.editCity);
+        editCountry = findViewById(R.id.editCountry);
+        editID = findViewById(R.id.editID);
+
+        final ArrayList<City> cityArrayList = new ArrayList<>();
+        Cursor cursor = db.getDataFromDb();
+        if (cursor.getCount()>0){
+            while (cursor.moveToNext()) {
+                String id = (cursor.getString(0) + "\n");
+                String city = ("CITY: " + cursor.getString(1) + "\n");
+                String country = ("COUNTRY: " + cursor.getString(2) + "\n");
+                String date = ("DATE: " + cursor.getString(3) + "\n");
+
+                City cityItem = new City(id, city, country, date);
+                cityArrayList.add(cityItem);
+            }
+        } else {
+            String id = "1";
+            String city = ("CITY: ");
+            String country = ("COUNTRY: ");
+            String date = ("DATE: ");
+
+            City cityItem = new City(id, city, country, date);
+            cityArrayList.add(cityItem);
+        }
+
+
+        final CityListAdapter adapter = new CityListAdapter(Main.this, R.layout.layout_adapter_list, cityArrayList);
+
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                City object = cityArrayList.get(position);
+                Toast toast = Toast.makeText(Main.this, object.country, Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 150, -150);
+                toast.show();
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String strDate = sdf.format(new Date());
+                db.addData(editCity.getText().toString(), editCountry.getText().toString(), strDate);
+                String city = editCity.getText().toString();
+                String country = editCountry.getText().toString();
+                String mix = city + country;
+                Toast.makeText(Main.this, mix, Toast.LENGTH_LONG ).show();
+                finish();
+                startActivity(getIntent());
+            }
+        });
+
+        getFromDb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Cursor cursor = db.getDataFromDb();
+                if (cursor.getCount()>0){
+                    StringBuffer stringBuffer = new StringBuffer();
+                    while (cursor.moveToNext()){
+                        stringBuffer.append("ID: " + cursor.getString(0) + "\n");
+                        stringBuffer.append("CITY: " + cursor.getString(1) + "\n");
+                        stringBuffer.append("COUNTRY: " + cursor.getString(2) + "\n");
+                        stringBuffer.append("DATE: " + cursor.getString(3) + "\n");
+
+                    }
+                    Toast.makeText(Main.this, stringBuffer.toString(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean success;
+                success = db.updateDb(editID.getText().toString(), editCity.getText().toString(), editCountry.getText().toString());
+                if (success){
+                    Toast.makeText(Main.this, "Update successful", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(Main.this, "Update error", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean success;
+                success = db.deleteItemFromDB(editID.getText().toString());
+                if (success){
+                    Toast.makeText(Main.this, "Item deleted", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(Main.this, "Delete error", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+    }
+}
