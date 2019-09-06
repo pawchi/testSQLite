@@ -16,8 +16,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 public class Main extends AppCompatActivity {
@@ -26,7 +29,7 @@ public class Main extends AppCompatActivity {
 
     ListView listView;
     Button save, getFromDb, update, delete;
-    EditText editCity, editCountry, editID;
+    EditText editCity, editCountry, editID, editDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,7 @@ public class Main extends AppCompatActivity {
         editCity = findViewById(R.id.editCity);
         editCountry = findViewById(R.id.editCountry);
         editID = findViewById(R.id.editID);
+        editDate = findViewById(R.id.editDate);
 
         final ArrayList<City> cityArrayList = new ArrayList<>();
         Cursor cursor = db.getDataFromDb();
@@ -64,6 +68,15 @@ public class Main extends AppCompatActivity {
             City cityItem = new City(id, city, country, date);
             cityArrayList.add(cityItem);
         }
+
+        Collections.sort(cityArrayList, new Comparator<City>() {
+            @Override
+            public int compare(City city1, City city2) {
+
+                //return city1.country.compareToIgnoreCase(city2.country);
+                return city1.getDateInDateForm().compareTo(city2.getDateInDateForm());
+            }
+        });
 
 
         final CityListAdapter adapter = new CityListAdapter(Main.this, R.layout.layout_adapter_list, cityArrayList);
@@ -117,12 +130,14 @@ public class Main extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 boolean success;
-                success = db.updateDb(editID.getText().toString(), editCity.getText().toString(), editCountry.getText().toString());
+                success = db.updateDb(editID.getText().toString(), editCity.getText().toString(), editCountry.getText().toString(), editDate.getText().toString());
                 if (success){
                     Toast.makeText(Main.this, "Update successful", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(Main.this, "Update error", Toast.LENGTH_LONG).show();
                 }
+                finish();
+                startActivity(getIntent());
             }
         });
 
@@ -136,6 +151,8 @@ public class Main extends AppCompatActivity {
                 } else {
                     Toast.makeText(Main.this, "Delete error", Toast.LENGTH_LONG).show();
                 }
+                finish();
+                startActivity(getIntent());
             }
         });
 

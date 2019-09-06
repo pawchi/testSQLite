@@ -1,5 +1,9 @@
 package org.chilon.test_diffrent_solutions;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class City {
     String id;
     String name;
@@ -43,5 +47,16 @@ public class City {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public Date getDateInDateForm(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date1 = new Date();
+        try {
+            date1 = sdf.parse(date);
+        } catch (ParseException e){
+            e.printStackTrace();
+        }
+        return date1;
     }
 }

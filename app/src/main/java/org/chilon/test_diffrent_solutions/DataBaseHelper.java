@@ -56,12 +56,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public boolean updateDb(String id, String city, String country){
+    public boolean updateDb(String id, String city, String country, String date){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("ID", id);
         contentValues.put("CITY", city);
         contentValues.put("COUNTRY", country);
+        contentValues.put("DATE", date);
         db.update(TABLE_NAME, contentValues, "ID = ?", new String[] {id});
         return true;
     }
