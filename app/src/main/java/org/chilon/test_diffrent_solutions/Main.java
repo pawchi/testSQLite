@@ -30,6 +30,7 @@ public class Main extends AppCompatActivity {
     ListView listView;
     Button save, getFromDb, update, delete;
     EditText editCity, editCountry, editID, editDate;
+    String idFromDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,12 +130,23 @@ public class Main extends AppCompatActivity {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean success;
-                success = db.updateDb(editID.getText().toString(), editCity.getText().toString(), editCountry.getText().toString(), editDate.getText().toString());
-                if (success){
+                String updateById = editID.getText().toString();
+                Cursor cursor = db.getDataById(updateById);
+
+                if (cursor.getCount()>0){
+                    StringBuffer stringBuffer = new StringBuffer();
+                    while (cursor.moveToNext()){
+                        stringBuffer.append(cursor.getString(0));
+                    }
+                    idFromDb = stringBuffer.toString();
+
+                }
+
+                if (idFromDb.equals(editID.getText().toString())){
+                    db.updateDb(editID.getText().toString(), editCity.getText().toString(), editCountry.getText().toString(), editDate.getText().toString());
                     Toast.makeText(Main.this, "Update successful", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(Main.this, "Update error", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Main.this, "Update error, ID not found", Toast.LENGTH_LONG).show();
                 }
                 finish();
                 startActivity(getIntent());

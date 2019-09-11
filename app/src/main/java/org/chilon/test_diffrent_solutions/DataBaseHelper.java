@@ -56,6 +56,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Cursor getDataById(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE ID = " + id;
+        Cursor data = db.rawQuery(query, null);
+
+        return data;
+    }
+
     public boolean updateDb(String id, String city, String country, String date){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
