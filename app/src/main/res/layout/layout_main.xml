@@ -22,6 +22,7 @@
             android:layout_height="20dp"
             android:text="Id"
             android:textAlignment="textStart" />
+
         <TextView
             android:layout_width="90dp"
             android:layout_height="20dp"
@@ -39,6 +40,38 @@
             android:textAlignment="textStart" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/layout_sorting_arrows"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_sort"
+        android:gravity="center_vertical">
+
+
+        <ImageView
+            android:id="@+id/sort_by_id"
+            android:layout_width="50dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/arrow_down_float"/>
+        <ImageView
+            android:id="@+id/sort_by_city"
+            android:layout_width="90dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/arrow_down_float"/>
+        <ImageView
+            android:id="@+id/sort_by_country"
+            android:layout_width="90dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/arrow_down_float"/>
+        <ImageView
+            android:id="@+id/sort_by_date"
+            android:layout_width="90dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/arrow_down_float"/>
+    </LinearLayout>
+
     <ListView
         android:id="@+id/listViewMain"
         android:layout_width="wrap_content"
@@ -47,7 +80,7 @@
         android:dividerHeight="2dp"
         app:layout_constraintBottom_toTopOf="@+id/inputLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_sort" />
+        app:layout_constraintTop_toBottomOf="@+id/layout_sorting_arrows" />
 
     <LinearLayout
         android:id="@+id/inputLayout"
